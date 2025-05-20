@@ -1,6 +1,7 @@
 package src.controller;
 
 import javafx.application.Platform;
+import javafx.animation.FadeTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -12,6 +13,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import src.model.Choice;
 import src.model.Game;
 import src.model.SaveManager;
@@ -294,9 +296,92 @@ public class JavaFXGameController {
             
             // Vérifier la fin du combat
             if (enemyEndurance[0] <= 0) {
+                boolean isBoss = choice.getEnemyName() != null && (
+                    choice.getEnemyName().equals("Zahda") || 
+                    choice.getEnemyName().contains("Chef") || 
+                    choice.getEnemyName().contains("Maître") || 
+                    choice.getEnemyName().contains("Gardien") ||
+                    choice.getEnemyCombatSkill() >= 10 ||  // Tout ennemi puissant est considéré comme un boss
+                    choice.getEnemyEndurance() >= 15       // Tout ennemi résistant est considéré comme un boss
+                );
+                
                 combatLog.appendText("Victoire! Vous avez vaincu " + choice.getEnemyName() + "!");
                 game.getPlayer().setEndurance(playerEndurance[0]);
+                
+                // Fermer la fenêtre de combat
                 combatStage.close();
+                
+                // Afficher une notification visuelle pour la victoire contre un boss
+                if (isBoss) {
+                    Platform.runLater(() -> {
+                        Stage victoryStage = new Stage();
+                        victoryStage.initModality(Modality.APPLICATION_MODAL);
+                        victoryStage.initOwner(view.getStage());
+                        victoryStage.setTitle("Victoire!");
+                        
+                        BorderPane victoryPane = new BorderPane();
+                        victoryPane.setBackground(new Background(new BackgroundFill(Color.rgb(20, 20, 40), CornerRadii.EMPTY, Insets.EMPTY)));
+                        victoryPane.setPadding(new Insets(20));
+                        
+                        VBox content = new VBox(15);
+                        content.setAlignment(Pos.CENTER);
+                        
+                        // Titre animé
+                        Text victoryText = new Text("BOSS VAINCU !");
+                        victoryText.setFont(Font.font("Georgia", FontWeight.BOLD, 32));
+                        victoryText.setFill(Color.GOLD);
+                        
+                        // Animation du texte
+                        FadeTransition fadeTransition = new FadeTransition(Duration.millis(500), victoryText);
+                        fadeTransition.setFromValue(0.3);
+                        fadeTransition.setToValue(1.0);
+                        fadeTransition.setCycleCount(4);
+                        fadeTransition.setAutoReverse(true);
+                        
+                        // Description de la victoire
+                        Text descriptionText = new Text("Vous avez triomphé de " + choice.getEnemyName() + " !");
+                        descriptionText.setFont(Font.font("Georgia", 18));
+                        descriptionText.setFill(Color.WHITE);
+                        
+                        // Statistiques
+                        Text statsText = new Text(
+                            "Votre endurance restante: " + playerEndurance[0] + "/" + playerMaxEndurance + "\n" +
+                            "Habileté au combat: " + playerCombatSkill
+                        );
+                        statsText.setFont(Font.font("Georgia", 14));
+                        statsText.setFill(Color.LIGHTBLUE);
+                        
+                        // Bouton pour continuer
+                        Button continueButton = new Button("Continuer l'aventure");
+                        continueButton.setFont(Font.font("Georgia", FontWeight.BOLD, 14));
+                        continueButton.setPrefWidth(200);
+                        continueButton.setStyle(
+                            "-fx-background-color: #3c3c64; " +
+                            "-fx-text-fill: white; " +
+                            "-fx-border-color: gold; " +
+                            "-fx-border-width: 2px; " +
+                            "-fx-border-radius: 5px;"
+                        );
+                        continueButton.setOnAction(evt -> victoryStage.close());
+                        
+                        content.getChildren().addAll(
+                            victoryText, 
+                            new Separator(), 
+                            descriptionText, 
+                            statsText, 
+                            continueButton
+                        );
+                        
+                        victoryPane.setCenter(content);
+                        
+                        // Démarrer l'animation
+                        fadeTransition.play();
+                        
+                        Scene victoryScene = new Scene(victoryPane, 400, 300);
+                        victoryStage.setScene(victoryScene);
+                        victoryStage.showAndWait();
+                    });
+                }
             } else if (playerEndurance[0] <= 0) {
                 combatLog.appendText("Défaite! Vous avez été vaincu par " + choice.getEnemyName() + "!");
                 game.getPlayer().setEndurance(0);

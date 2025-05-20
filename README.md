@@ -4,7 +4,65 @@
 
 **Référence :** YNOV-PROJET-JAVA-2025  
 **Auteurs :** Xerly, Romain, Dimitri  
-**Date :** Mai 2025
+**Date :** Mai 2025  
+**Basé sur :** Loup Solitaire 17 - La Tour de Cristal
+
+## Guide d'installation et de démarrage
+
+### Prérequis
+
+- **Java JDK 24** (ou version ultérieure)
+- **JavaFX SDK 24.0.1** (ou version ultérieure)
+
+### Étapes d'installation
+
+1. **Cloner le dépôt Git**
+   ```
+   git clone [URL_DU_DEPOT]
+   cd projet
+   ```
+
+2. **Configurer JavaFX**
+   - Téléchargez [JavaFX SDK](https://gluonhq.com/products/javafx/) (version 24.0.1 ou ultérieure)
+   - Extrayez l'archive dans un dossier accessible (ex: `C:\javafx-sdk-24.0.1` ou `/opt/javafx-sdk-24.0.1`)
+
+3. **Configurer la variable d'environnement PATH_TO_FX**
+   
+   **Windows:**
+   ```
+   set PATH_TO_FX=C:\chemin\vers\javafx-sdk-24.0.1\lib
+   ```
+   
+   **Linux/macOS:**
+   ```
+   export PATH_TO_FX=/chemin/vers/javafx-sdk-24.0.1/lib
+   ```
+
+### Exécution du jeu
+
+#### Méthode 1 : Utiliser le script batch
+1. Éditez le fichier `run.bat` pour vous assurer que la variable PATH_TO_FX est correctement définie
+2. Double-cliquez sur `run.bat` ou exécutez-le depuis un terminal
+
+#### Méthode 2 : Exécution manuelle
+1. Compilez le projet (si ce n'est pas déjà fait) :
+   ```
+   javac --module-path "%PATH_TO_FX%" --add-modules javafx.controls,javafx.fxml -d out src/*.java src/model/*.java src/view/*.java src/controller/*.java
+   ```
+
+2. Exécutez le jeu :
+   ```
+   java --module-path "%PATH_TO_FX%" --add-modules javafx.controls,javafx.fxml -cp out src.Main
+   ```
+
+### Configuration IntelliJ IDEA (recommandé)
+1. Ouvrez le projet dans IntelliJ IDEA
+2. Allez dans File > Project Structure > Libraries
+3. Vérifiez que la bibliothèque JavaFX est correctement configurée (sinon, ajoutez-la en pointant vers votre dossier JavaFX)
+4. Configurez les VM options pour la configuration d'exécution :
+   ```
+   --module-path "CHEMIN_VERS_JAVAFX\lib" --add-modules javafx.controls,javafx.fxml
+   ```
 
 ## 1. Présentation
 
@@ -32,6 +90,7 @@ L'objectif de ce projet est de concevoir et développer un jeu interactif où le
 | [REF 1] | Document «MiniProjetYnovB1.pdf» mars 2025 |
 | [REF 2] | Java Documentation - Oracle (https://docs.oracle.com/en/java/) |
 | [REF 3] | JavaFX Documentation - Oracle (https://openjfx.io/javadoc/17/) |
+| [REF 4] | Loup Solitaire 17 - La Tour de Cristal (Joe Dever) |
 
 #### 1.2.3 Glossaire métier
 
@@ -169,32 +228,38 @@ Plusieurs défis techniques ont été relevés durant le développement :
 ### 3.2 Structure du projet
 
 ```
-src/
-├── Main.java
-├── Choice.java
-├── GameManager.java
-├── Player.java
-├── Section.java
-├── controller/
-│   ├── CombatController.java
-│   ├── GameController.java
-│   ├── JavaFXGameController.java
-├── model/
+projet/
+├── src/
+│   ├── Main.java
 │   ├── Choice.java
-│   ├── Enemy.java
-│   ├── Game.java
+│   ├── GameManager.java
 │   ├── Player.java
-│   ├── SaveManager.java
 │   ├── Section.java
-├── view/
-│   ├── ConsoleUtils.java
-│   ├── GameView.java
-│   ├── JavaFXView.java
-└── resources/
-    ├── css/
-    │   └── style.css
-    ├── images/
-        └── crystal_tower_icon.png
+│   ├── controller/
+│   │   ├── CombatController.java
+│   │   ├── GameController.java
+│   │   ├── JavaFXGameController.java
+│   ├── model/
+│   │   ├── Choice.java
+│   │   ├── Enemy.java
+│   │   ├── Game.java
+│   │   ├── Player.java
+│   │   ├── SaveManager.java
+│   │   ├── Section.java
+│   ├── view/
+│   │   ├── ConsoleUtils.java
+│   │   ├── GameView.java
+│   │   ├── JavaFXView.java
+│   ├── resources/
+│       ├── css/
+│       │   └── style.css
+│       ├── images/
+│           └── crystal_tower_icon.png
+├── module-info.java
+├── projet.iml
+├── run.bat
+├── README.md
+└── saves/        # Dossier créé automatiquement pour les sauvegardes
 ```
 
 ### 3.3 Fonctionnalités implémentées
@@ -260,3 +325,12 @@ Le projet "La Tour de Cristal" implémente avec succès un jeu du type "livre do
 - Sauvegarde en ligne avec classements des joueurs
 - Mode multijoueur coopératif
 - Applications mobiles (Android/iOS) via JavaFX Mobile
+
+### 3.6 Dépannage et problèmes courants
+
+- **Erreur "Error: JavaFX runtime components are missing"** - Vérifiez que la variable PATH_TO_FX est correctement définie et pointe vers le dossier lib de JavaFX
+- **Problème de démarrage** - Assurez-vous d'utiliser JDK 24 ou une version compatible
+- **Problème de sauvegarde** - Vérifiez que le dossier "saves" existe et que vous avez les droits d'écriture
+- **Problème d'affichage** - Si l'interface graphique ne s'affiche pas correctement, essayez de redimensionner la fenêtre
+
+Pour toute question ou problème, contactez les auteurs du projet.

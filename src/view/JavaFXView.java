@@ -7,20 +7,31 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import src.controller.GameController;
 import src.controller.JavaFXGameController;
 import src.model.Choice;
 import src.model.Player;
 import src.model.Section;
+import javafx.scene.control.Separator;
 
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 
@@ -142,32 +153,129 @@ public class JavaFXView {
     
     public void setupGameScreen() {
         root = new BorderPane();
-        root.setBackground(new Background(new BackgroundFill(BG_COLOR, CornerRadii.EMPTY, Insets.EMPTY)));
         
-        // Zone de texte du jeu avec scroll
+        // Ajouter un arrière-plan avec image pour toute l'interface
+        try {
+            // Changer le chemin d'accès: d'abord essayer depuis les ressources externes
+            Image backgroundImage = null;
+            try {
+                // Essayer de charger depuis un fichier externe
+                File file = new File("src/resources/background.jpg");
+                if (file.exists()) {
+                    backgroundImage = new Image(file.toURI().toString());
+                }
+            } catch (Exception e) {
+                System.out.println("Impossible de charger l'image depuis le système de fichiers");
+            }
+            
+            // Si ça n'a pas fonctionné, utiliser une couleur par défaut avec dégradé
+            if (backgroundImage == null) {
+                // Définir un dégradé comme arrière-plan par défaut
+                LinearGradient gradient = new LinearGradient(0, 0, 0, 1, true,
+                    CycleMethod.NO_CYCLE,
+                    new Stop(0, Color.rgb(20, 20, 60)),
+                    new Stop(1, Color.rgb(50, 10, 90))
+                );
+                root.setBackground(new Background(new BackgroundFill(gradient, CornerRadii.EMPTY, Insets.EMPTY)));
+            } else {
+                // Utiliser l'image chargée
+                BackgroundImage bgImage = new BackgroundImage(
+                    backgroundImage,
+                    BackgroundRepeat.NO_REPEAT,
+                    BackgroundRepeat.NO_REPEAT,
+                    BackgroundPosition.CENTER,
+                    new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true)
+                );
+                root.setBackground(new Background(bgImage));
+            }
+        } catch (Exception e) {
+            // Fallback avec la couleur de fond en cas d'échec
+            System.out.println("Erreur de chargement d'image: " + e.getMessage());
+            root.setBackground(new Background(new BackgroundFill(BG_COLOR, CornerRadii.EMPTY, Insets.EMPTY)));
+        }
+        
+        // Zone de texte du jeu avec scroll et fond semi-transparent
         gameTextFlow = new TextFlow();
         gameTextFlow.setPadding(new Insets(20));
         
+        // Ajouter un fond semi-transparent au texte pour améliorer la lisibilité
+        gameTextFlow.setBackground(new Background(new BackgroundFill(
+            Color.rgb(20, 20, 40, 0.85), // Couleur avec transparence
+            new CornerRadii(5),
+            Insets.EMPTY
+        )));
+        
         scrollPane = new ScrollPane(gameTextFlow);
         scrollPane.setFitToWidth(true);
-        scrollPane.setBackground(new Background(new BackgroundFill(BG_COLOR, CornerRadii.EMPTY, Insets.EMPTY)));
+        
+        // Rendre le fond du scroll transparent
+        scrollPane.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
         scrollPane.getStyleClass().add("edge-to-edge");
         
-        // Zone des choix
+        // Zone des choix avec fond semi-transparent
         choicesBox = new VBox(10);
         choicesBox.setPadding(new Insets(20));
         choicesBox.setAlignment(Pos.CENTER_LEFT);
+        choicesBox.setBackground(new Background(new BackgroundFill(
+            Color.rgb(20, 20, 40, 0.85), // Couleur avec transparence
+            new CornerRadii(5),
+            Insets.EMPTY
+        )));
         
-        // Panneau des statistiques
+        // Panneau des statistiques avec fond semi-transparent
         statsBox = new HBox(20);
         statsBox.setPadding(new Insets(10, 20, 10, 20));
-        statsBox.setBackground(new Background(new BackgroundFill(Color.rgb(40, 40, 60), CornerRadii.EMPTY, Insets.EMPTY)));
+        statsBox.setBackground(new Background(new BackgroundFill(
+            Color.rgb(40, 40, 60, 0.9),
+            new CornerRadii(5),
+            Insets.EMPTY
+        )));
         
-        // Menu du jeu
+        // Menu du jeu avec fond semi-transparent - Avec bouton d'aide ajouté
         HBox menuBar = new HBox(10);
         menuBar.setPadding(new Insets(10));
-        menuBar.setBackground(new Background(new BackgroundFill(Color.rgb(30, 30, 50), CornerRadii.EMPTY, Insets.EMPTY)));
+        menuBar.setBackground(new Background(new BackgroundFill(
+            Color.rgb(30, 30, 50, 0.9),
+            new CornerRadii(0),
+            Insets.EMPTY
+        )));
         
+        // Bouton d'aide à gauche
+        Button helpBtn = new Button("?");
+        helpBtn.setFont(Font.font("Georgia", FontWeight.BOLD, 14));
+        helpBtn.setPrefWidth(30);
+        helpBtn.setPrefHeight(30);
+        helpBtn.setStyle(
+            "-fx-background-color: #3c3c64; " +
+            "-fx-text-fill: #8a8aff; " +
+            "-fx-border-color: #8a8aff; " +
+            "-fx-border-width: 1px; " +
+            "-fx-border-radius: 15px; " +
+            "-fx-background-radius: 15px;"
+        );
+        helpBtn.setOnMouseEntered(e -> 
+            helpBtn.setStyle(
+                "-fx-background-color: #5050a0; " +
+                "-fx-text-fill: white; " +
+                "-fx-border-color: #8a8aff; " +
+                "-fx-border-width: 1px; " +
+                "-fx-border-radius: 15px; " +
+                "-fx-background-radius: 15px;"
+            )
+        );
+        helpBtn.setOnMouseExited(e -> 
+            helpBtn.setStyle(
+                "-fx-background-color: #3c3c64; " +
+                "-fx-text-fill: #8a8aff; " +
+                "-fx-border-color: #8a8aff; " +
+                "-fx-border-width: 1px; " +
+                "-fx-border-radius: 15px; " +
+                "-fx-background-radius: 15px;"
+            )
+        );
+        helpBtn.setOnAction(e -> showReadmeHelp());
+        
+        // Boutons du menu principal à droite
         Button saveBtn = new Button("Sauvegarder");
         Button loadBtn = new Button("Charger");
         Button menuBtn = new Button("Menu principal");
@@ -180,11 +288,19 @@ public class JavaFXView {
         styleButton(loadBtn);
         styleButton(menuBtn);
         
-        menuBar.getChildren().addAll(saveBtn, loadBtn, menuBtn);
-        menuBar.setAlignment(Pos.CENTER_RIGHT);
+        // Créer une barre divisée en deux parties: aide à gauche, menu à droite
+        HBox rightButtons = new HBox(10, saveBtn, loadBtn, menuBtn);
+        rightButtons.setAlignment(Pos.CENTER_RIGHT);
         
-        // Assemblage de l'interface
-        VBox gameContentBox = new VBox();
+        // Utiliser tout l'espace disponible pour la séparation
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        
+        menuBar.getChildren().addAll(helpBtn, spacer, rightButtons);
+        
+        // Ajouter de la marge entre les composants
+        VBox gameContentBox = new VBox(15); // 15px de marge
+        gameContentBox.setPadding(new Insets(20));
         gameContentBox.getChildren().addAll(scrollPane, choicesBox);
         VBox.setVgrow(scrollPane, Priority.ALWAYS);
         
@@ -215,15 +331,24 @@ public class JavaFXView {
         
         gameTextFlow.getChildren().clear();
         
-        // Titre de la section
+        // Titre de la section avec effet d'ombre pour une meilleure lisibilité
         Text titleText = new Text("Section " + section.getNumber() + "\n");
         titleText.setFont(Font.font("Georgia", FontWeight.BOLD, 24));
         titleText.setFill(TITLE_COLOR);
         
-        // Texte de la section
+        // Ajouter un effet d'ombre pour améliorer la lisibilité sur l'image de fond
+        DropShadow dropShadow = new DropShadow();
+        dropShadow.setRadius(2.0);
+        dropShadow.setOffsetX(1.0);
+        dropShadow.setOffsetY(1.0);
+        dropShadow.setColor(Color.rgb(0, 0, 0, 0.7));
+        titleText.setEffect(dropShadow);
+        
+        // Texte de la section avec effet d'ombre
         Text sectionText = new Text(section.getText() + "\n\n");
         sectionText.setFont(Font.font("Georgia", 16));
         sectionText.setFill(TEXT_COLOR);
+        sectionText.setEffect(dropShadow);
         
         gameTextFlow.getChildren().addAll(titleText, sectionText);
         
@@ -246,9 +371,18 @@ public class JavaFXView {
             return;
         }
         
+        // Titre avec ombre pour améliorer la lisibilité
         Text choicePrompt = new Text("Que souhaitez-vous faire?");
         choicePrompt.setFont(Font.font("Georgia", FontWeight.BOLD, 18));
         choicePrompt.setFill(CHOICE_COLOR);
+        
+        // Ajouter un effet d'ombre
+        DropShadow dropShadow = new DropShadow();
+        dropShadow.setRadius(2.0);
+        dropShadow.setOffsetX(1.0);
+        dropShadow.setOffsetY(1.0);
+        dropShadow.setColor(Color.rgb(0, 0, 0, 0.7));
+        choicePrompt.setEffect(dropShadow);
         
         choicesBox.getChildren().add(choicePrompt);
         
@@ -440,5 +574,251 @@ public class JavaFXView {
     
     public Stage getStage() {
         return stage;
+    }
+    
+    /**
+     * Affiche le contenu du fichier README.md dans une fenêtre d'aide avec formatage Markdown amélioré
+     */
+    private void showReadmeHelp() {
+        // Créer une fenêtre modale
+        Stage helpStage = new Stage();
+        helpStage.initModality(Modality.APPLICATION_MODAL);
+        helpStage.initOwner(stage);
+        helpStage.setTitle("Documentation - La Tour de Cristal");
+        
+        // Créer le conteneur principal avec fond sombre
+        BorderPane helpRoot = new BorderPane();
+        helpRoot.setBackground(new Background(new BackgroundFill(
+            Color.rgb(25, 25, 45),
+            CornerRadii.EMPTY,
+            Insets.EMPTY
+        )));
+        helpRoot.setPadding(new Insets(15));
+        
+        // Titre de l'aide
+        Text helpTitle = new Text("DOCUMENTATION DU JEU");
+        helpTitle.setFont(Font.font("Georgia", FontWeight.BOLD, 24));
+        helpTitle.setFill(TITLE_COLOR);
+        
+        // Créer une zone de texte pour afficher le README
+        VBox readmeContainer = new VBox(10);
+        readmeContainer.setPadding(new Insets(15));
+        
+        // Charger le contenu du README.md
+        try {
+            String readmeContent = new String(Files.readAllBytes(Paths.get("README.md")), StandardCharsets.UTF_8);
+            
+            // Parcourir ligne par ligne pour créer les composants
+            String[] lines = readmeContent.split("\n");
+            
+            boolean inCodeBlock = false;
+            StringBuilder codeBlockContent = new StringBuilder();
+            
+            boolean inTable = false;
+            StringBuilder tableContent = new StringBuilder();
+            
+            for (int i = 0; i < lines.length; i++) {
+                String line = lines[i];
+                
+                // Gestion des blocs de code
+                if (line.startsWith("```")) {
+                    if (inCodeBlock) {
+                        // Fin du bloc de code
+                        inCodeBlock = false;
+                        TextArea codeArea = new TextArea(codeBlockContent.toString());
+                        codeArea.setEditable(false);
+                        codeArea.setWrapText(true);
+                        codeArea.setStyle(
+                            "-fx-background-color: #2d2d3d; " +
+                            "-fx-text-fill: #a9b7c6; " +
+                            "-fx-font-family: 'Courier New'; " +
+                            "-fx-font-size: 14px; " +
+                            "-fx-border-color: #444;"
+                        );
+                        codeArea.setPrefHeight(codeBlockContent.toString().split("\n").length * 20 + 20);
+                        codeBlockContent.setLength(0);
+                        readmeContainer.getChildren().add(codeArea);
+                    } else {
+                        // Début du bloc de code
+                        inCodeBlock = true;
+                    }
+                    continue;
+                }
+                
+                if (inCodeBlock) {
+                    codeBlockContent.append(line).append("\n");
+                    continue;
+                }
+                
+                // Gestion des tableaux
+                if (line.startsWith("|")) {
+                    if (!inTable) {
+                        inTable = true;
+                        tableContent.setLength(0);
+                    }
+                    tableContent.append(line).append("\n");
+                    
+                    // Vérifier si c'est la fin du tableau
+                    if (i == lines.length - 1 || !lines[i + 1].startsWith("|")) {
+                        // Créer un tableau formaté
+                        inTable = false;
+                        TextArea tableArea = new TextArea(tableContent.toString());
+                        tableArea.setEditable(false);
+                        tableArea.setWrapText(true);
+                        tableArea.setStyle(
+                            "-fx-background-color: #2a2a40; " +
+                            "-fx-text-fill: #e0e0e0; " +
+                            "-fx-font-family: 'Courier New'; " +
+                            "-fx-font-size: 14px; " +
+                            "-fx-border-color: #555;"
+                        );
+                        tableArea.setPrefHeight(tableContent.toString().split("\n").length * 24 + 10);
+                        readmeContainer.getChildren().add(tableArea);
+                    }
+                    continue;
+                } else if (inTable) {
+                    inTable = false;
+                    // Créer un tableau formaté
+                    TextArea tableArea = new TextArea(tableContent.toString());
+                    tableArea.setEditable(false);
+                    tableArea.setWrapText(true);
+                    tableArea.setStyle(
+                        "-fx-background-color: #2a2a40; " +
+                        "-fx-text-fill: #e0e0e0; " +
+                        "-fx-font-family: 'Courier New'; " +
+                        "-fx-font-size: 14px; " +
+                        "-fx-border-color: #555;"
+                    );
+                    tableArea.setPrefHeight(tableContent.toString().split("\n").length * 24 + 10);
+                    readmeContainer.getChildren().add(tableArea);
+                }
+                
+                // Titres H1
+                if (line.startsWith("# ")) {
+                    Label titleLabel = new Label(line.substring(2));
+                    titleLabel.setFont(Font.font("Georgia", FontWeight.BOLD, 26));
+                    titleLabel.setTextFill(Color.LIGHTBLUE);
+                    titleLabel.setPadding(new Insets(10, 0, 5, 0));
+                    
+                    // Ajouter une séparation horizontale sous le titre
+                    Separator separator = new Separator();
+                    separator.setStyle("-fx-background-color: #4a6da7;");
+                    
+                    VBox titleBox = new VBox(5, titleLabel, separator);
+                    titleBox.setPadding(new Insets(10, 0, 5, 0));
+                    readmeContainer.getChildren().add(titleBox);
+                    continue;
+                }
+                
+                // Titres H2
+                if (line.startsWith("## ")) {
+                    Label titleLabel = new Label(line.substring(3));
+                    titleLabel.setFont(Font.font("Georgia", FontWeight.BOLD, 22));
+                    titleLabel.setTextFill(Color.LIGHTSKYBLUE);
+                    titleLabel.setPadding(new Insets(8, 0, 4, 0));
+                    readmeContainer.getChildren().add(titleLabel);
+                    continue;
+                }
+                
+                // Titres H3
+                if (line.startsWith("### ")) {
+                    Label titleLabel = new Label(line.substring(4));
+                    titleLabel.setFont(Font.font("Georgia", FontWeight.BOLD, 18));
+                    titleLabel.setTextFill(Color.LIGHTSTEELBLUE);
+                    titleLabel.setPadding(new Insets(6, 0, 3, 0));
+                    readmeContainer.getChildren().add(titleLabel);
+                    continue;
+                }
+                
+                // Liste à puces
+                if (line.startsWith("- ") || line.startsWith("* ")) {
+                    HBox bulletBox = new HBox(10);
+                    bulletBox.setAlignment(Pos.CENTER_LEFT);
+                    
+                    Label bulletLabel = new Label("•");
+                    bulletLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+                    bulletLabel.setTextFill(Color.LIGHTGRAY);
+                    
+                    Label textLabel = new Label(line.substring(2));
+                    textLabel.setFont(Font.font("Georgia", 14));
+                    textLabel.setTextFill(Color.WHITE);
+                    textLabel.setWrapText(true);
+                    
+                    bulletBox.getChildren().addAll(bulletLabel, textLabel);
+                    bulletBox.setPadding(new Insets(2, 0, 2, 20));
+                    readmeContainer.getChildren().add(bulletBox);
+                    continue;
+                }
+                
+                // Ligne vide
+                if (line.trim().isEmpty()) {
+                    Pane spacer = new Pane();
+                    spacer.setPrefHeight(10);
+                    readmeContainer.getChildren().add(spacer);
+                    continue;
+                }
+                
+                // Texte normal
+                Label textLabel = new Label(line);
+                textLabel.setFont(Font.font("Georgia", 14));
+                textLabel.setTextFill(Color.WHITE);
+                textLabel.setWrapText(true);
+                readmeContainer.getChildren().add(textLabel);
+            }
+            
+        } catch (Exception e) {
+            Label errorLabel = new Label("Impossible de charger le fichier README.md:\n" + e.getMessage());
+            errorLabel.setFont(Font.font("Georgia", 14));
+            errorLabel.setTextFill(Color.RED);
+            readmeContainer.getChildren().add(errorLabel);
+        }
+        
+        // Mettre le contenu dans un ScrollPane
+        ScrollPane readmeScroll = new ScrollPane(readmeContainer);
+        readmeScroll.setFitToWidth(true);
+        readmeScroll.setPrefHeight(600);
+        readmeScroll.setBackground(new Background(new BackgroundFill(
+            Color.rgb(30, 30, 50),
+            CornerRadii.EMPTY,
+            Insets.EMPTY
+        )));
+        readmeScroll.setStyle(
+            "-fx-background: rgb(30, 30, 50); " +
+            "-fx-background-color: rgb(30, 30, 50); " +
+            "-fx-control-inner-background: rgb(30, 30, 50);"
+        );
+        
+        // Bouton de fermeture
+        Button closeButton = new Button("Fermer");
+        closeButton.setFont(Font.font("Georgia", FontWeight.BOLD, 14));
+        closeButton.setPrefWidth(120);
+        closeButton.setPrefHeight(30);
+        closeButton.setStyle(
+            "-fx-background-color: #3c3c64; " +
+            "-fx-text-fill: white; " +
+            "-fx-border-color: #8a8aff; " +
+            "-fx-border-width: 1px; " +
+            "-fx-border-radius: 5px;"
+        );
+        closeButton.setOnAction(e -> helpStage.close());
+        
+        // Conteneur pour le titre
+        HBox titleBox = new HBox(15, helpTitle);
+        titleBox.setAlignment(Pos.CENTER);
+        titleBox.setPadding(new Insets(0, 0, 15, 0));
+        
+        // Conteneur pour le bouton en bas
+        HBox bottomBox = new HBox(closeButton);
+        bottomBox.setAlignment(Pos.CENTER);
+        bottomBox.setPadding(new Insets(15, 0, 0, 0));
+        
+        // Assembler l'interface
+        VBox contentBox = new VBox(10);
+        contentBox.getChildren().addAll(titleBox, readmeScroll, bottomBox);
+        helpRoot.setCenter(contentBox);
+        
+        Scene helpScene = new Scene(helpRoot, 800, 700);
+        helpStage.setScene(helpScene);
+        helpStage.showAndWait();
     }
 } 
