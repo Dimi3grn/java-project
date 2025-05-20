@@ -1,0 +1,220 @@
+.root {
+    -fx-background-color: #14142a;
+    -fx-font-family: "Georgia";
+}
+
+.text-flow {
+    -fx-background-color: #14142a;
+}
+
+.scroll-pane {
+    -fx-background-color: #14142a;
+    -fx-background: #14142a;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: #14142a;
+}
+
+.scroll-bar:vertical {
+    -fx-background-color: #14142a;
+}
+
+.scroll-bar:horizontal {
+    -fx-background-color: #14142a;
+}
+
+.scroll-bar > .thumb {
+    -fx-background-color: #3c3c64;
+}
+
+.button {
+    -fx-background-color: #3c3c64;
+    -fx-text-fill: white;
+    -fx-border-color: #8a8aff;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+}
+
+.button:hover {
+    -fx-background-color: #5050a0;
+}
+
+.choice-button {
+    -fx-background-color: #3c3c64;
+    -fx-text-fill: white;
+    -fx-border-color: #8a8aff;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-alignment: center-left;
+    -fx-font-size: 16px;
+    -fx-padding: 10px 15px 10px 15px;
+}
+
+.choice-button:hover {
+    -fx-background-color: #5050a0;
+}
+
+.menu-button {
+    -fx-background-color: #3c3c64;
+    -fx-text-fill: white;
+    -fx-border-color: #8a8aff;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-pref-width: 200px;
+    -fx-pref-height: 50px;
+}
+
+.menu-button:hover {
+    -fx-background-color: #5050a0;
+}
+
+.stats-box {
+    -fx-background-color: #323246;
+    -fx-padding: 10px;
+    -fx-spacing: 20px;
+}
+
+.stats-panel {
+    -fx-background-color: #323246;
+    -fx-background-radius: 5px;
+    -fx-padding: 5px;
+}
+
+.inventory-panel {
+    -fx-background-color: #3c3c28;
+    -fx-background-radius: 5px;
+    -fx-padding: 5px;
+}
+
+.panel-title {
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+}
+
+.label {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+}
+
+.value-label {
+    -fx-text-fill: yellow;
+    -fx-font-size: 14px;
+}
+
+.section-title {
+    -fx-font-weight: bold;
+    -fx-font-size: 24px;
+    -fx-fill: lightblue;
+}
+
+.section-text {
+    -fx-font-size: 16px;
+    -fx-fill: white;
+}
+
+.choice-prompt {
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
+    -fx-fill: lightgreen;
+}
+
+.list-view {
+    -fx-background-color: #202040;
+    -fx-control-inner-background: #202040;
+}
+
+.list-cell {
+    -fx-background-color: #202040;
+    -fx-text-fill: white;
+}
+
+.list-cell:filled:selected {
+    -fx-background-color: #3c3c64;
+    -fx-text-fill: white;
+}
+
+.combat-button {
+    -fx-background-color: #600000;
+    -fx-text-fill: white;
+    -fx-border-color: #800000;
+    -fx-border-width: 2px;
+    -fx-font-weight: bold;
+    -fx-pref-width: 150px;
+}
+
+.combat-button:hover {
+    -fx-background-color: #800000;
+}
+
+.flee-button {
+    -fx-background-color: #303030;
+    -fx-text-fill: white;
+    -fx-border-color: #505050;
+    -fx-border-width: 2px;
+    -fx-pref-width: 150px;
+}
+
+.flee-button:hover {
+    -fx-background-color: #505050;
+}
+
+.combat-log {
+    -fx-control-inner-background: #202040;
+    -fx-text-fill: white;
+    -fx-font-family: "Georgia";
+}
+
+.progress-bar {
+    -fx-pref-width: 400px;
+}
+
+.progress-bar.player {
+    -fx-accent: green;
+}
+
+.progress-bar.enemy {
+    -fx-accent: red;
+}
+
+.health-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+}
+
+.player-health {
+    -fx-text-fill: lightgreen;
+}
+
+.enemy-health {
+    -fx-text-fill: lightcoral;
+}
+
+.text-input-dialog {
+    -fx-background-color: #202040;
+}
+
+.dialog-pane {
+    -fx-background-color: #202040;
+}
+
+.dialog-pane .header-panel {
+    -fx-background-color: #3c3c64;
+}
+
+.dialog-pane .content {
+    -fx-text-fill: white;
+}
+
+.dialog-pane .button-bar .button {
+    -fx-background-color: #3c3c64;
+    -fx-text-fill: white;
+    -fx-border-color: #8a8aff;
+}
+
+.dialog-pane .button-bar .button:hover {
+    -fx-background-color: #5050a0;
+} 

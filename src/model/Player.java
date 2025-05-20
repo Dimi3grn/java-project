@@ -2,6 +2,7 @@ package src.model;
 
 public class Player {
     private int endurance;
+    private int maxEndurance;
     private int combatSkill;
     private int gold;
     private int meals;
@@ -10,6 +11,7 @@ public class Player {
 
     public Player() {
         this.endurance = 20;
+        this.maxEndurance = 20;
         this.combatSkill = 10;
         this.gold = 0;
         this.meals = 0;
@@ -23,7 +25,15 @@ public class Player {
     }
 
     public void setEndurance(int endurance) {
-        this.endurance = endurance;
+        this.endurance = Math.min(endurance, maxEndurance);
+    }
+    
+    public int getMaxEndurance() {
+        return maxEndurance;
+    }
+    
+    public void setMaxEndurance(int maxEndurance) {
+        this.maxEndurance = maxEndurance;
     }
 
     public int getCombatSkill() {
@@ -67,7 +77,7 @@ public class Player {
     }
 
     public void addEndurance(int amount) {
-        this.endurance += amount;
+        this.endurance = Math.min(this.endurance + amount, maxEndurance);
     }
 
     public void addCombatSkill(int amount) {
@@ -81,19 +91,58 @@ public class Player {
     public void addMeal() {
         this.meals++;
     }
+    
+    public void addMeal(int amount) {
+        this.meals += amount;
+    }
 
     public void addPotion() {
         this.potions++;
     }
+    
+    public void addPotion(int amount) {
+        this.potions += amount;
+    }
 
     public void addSpecialItem() {
         this.specialItems++;
+    }
+    
+    public void addSpecialItem(int amount) {
+        this.specialItems += amount;
+    }
+    
+    public void removeGold(int amount) {
+        this.gold = Math.max(0, this.gold - amount);
+    }
+    
+    public void removeMeal(int amount) {
+        this.meals = Math.max(0, this.meals - amount);
+    }
+    
+    public void removePotion(int amount) {
+        this.potions = Math.max(0, this.potions - amount);
+    }
+    
+    public void removeSpecialItem(int amount) {
+        this.specialItems = Math.max(0, this.specialItems - amount);
+    }
+    
+    public void takeDamage(int amount) {
+        this.endurance = Math.max(0, this.endurance - amount);
+    }
+    
+    public void heal(int amount) {
+        this.endurance = Math.min(this.endurance + amount, maxEndurance);
     }
 
     public boolean useMeal() {
         if (meals > 0) {
             meals--;
             endurance += 4;
+            if (endurance > maxEndurance) {
+                endurance = maxEndurance;
+            }
             return true;
         }
         return false;
@@ -103,6 +152,9 @@ public class Player {
         if (potions > 0) {
             potions--;
             endurance += 6;
+            if (endurance > maxEndurance) {
+                endurance = maxEndurance;
+            }
             return true;
         }
         return false;
@@ -119,5 +171,9 @@ public class Player {
             default:
                 return false;
         }
+    }
+    
+    public boolean hasGold(int amount) {
+        return gold >= amount;
     }
 } 

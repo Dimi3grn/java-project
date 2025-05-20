@@ -27,7 +27,18 @@ public class Game {
     }
 
     public void setCurrentSection(int sectionNumber) {
-        this.currentSection = sectionNumber;
+        if (!sections.containsKey(sectionNumber)) {
+            System.err.println("Section " + sectionNumber + " not found in the sections map");
+            // Si la section n'existe pas, utiliser une section par défaut (404)
+            if (sections.containsKey(404)) {
+                this.currentSection = 404;
+            } else {
+                // Si la section 404 n'existe pas non plus, revenir à la section 1
+                this.currentSection = 1; 
+            }
+        } else {
+            this.currentSection = sectionNumber;
+        }
     }
 
     public boolean isGameOver() {
@@ -397,5 +408,275 @@ public class Game {
             "le sorcier. La Tour de Cristal est libérée de son influence néfaste, et vous avez accompli votre mission " +
             "pour le Sommerlund. Cette victoire sera chantée dans les annales des Seigneurs Kai !");
         sections.put(99, sectionFinale);
+
+        // Ajouter des sections finales pour tous les chemins
+        // Section 99 - Victoire finale (à conserver)
+        Section sectionVictory = new Section(99,
+            "Vous avez atteint le sommet de la Tour de Cristal et découvert le secret du sorcier Zahda. " +
+            "Son cristal de pouvoir est maintenant détruit et ses plans maléfiques anéantis. " +
+            "Vous contemplez le royaume du Sommerlund depuis les hauteurs, sachant que vous avez accompli votre mission. " +
+            "La route du retour sera longue, mais vous êtes Loup Solitaire, le dernier des Seigneurs Kai, " +
+            "et rien ne pourra désormais vous arrêter.");
+        sections.put(99, sectionVictory);
+        
+        // Section 98 - Défaite honorable
+        Section sectionDefeat = new Section(98,
+            "Malgré votre courage et vos compétences, la Tour de Cristal s'est avérée être un adversaire trop puissant. " +
+            "Les sortilèges de Zahda ont eu raison de votre résistance, et vous sentez vos forces vous abandonner. " +
+            "Votre seule consolation est que vous avez combattu avec honneur jusqu'au bout. " +
+            "Peut-être un autre héros viendra-t-il un jour achever ce que vous avez commencé.");
+        sections.put(98, sectionDefeat);
+        
+        // Section 90 - Chemin vers la victoire
+        Section section90 = new Section(90,
+            "Après un dernier effort, vous parvenez à la salle du trône de Zahda. Le sorcier maléfique vous y attend, " +
+            "son cristal de pouvoir brillant dans sa main. 'Vous êtes arrivé loin, Loup Solitaire,' dit-il d'une voix caverneuse, " +
+            "'mais votre quête s'achève ici!'");
+        Choice choice90_1 = new Choice("Affronter Zahda en combat", 91);
+        choice90_1.setCombat("Zahda", 12, 15, false);
+        Choice choice90_2 = new Choice("Utiliser la pierre de cristal bleue (si vous l'avez)", 92);
+        choice90_2.setRequiresSpecialItem();
+        section90.addChoice(choice90_1);
+        section90.addChoice(choice90_2);
+        sections.put(90, section90);
+        
+        // Section 91 - Combat final contre Zahda
+        Section section91 = new Section(91,
+            "Le combat contre Zahda est terrible. Ses pouvoirs magiques rendent la lutte inégale, mais votre détermination " +
+            "et votre entraînement de Seigneur Kai vous permettent de tenir bon. Après un échange de coups féroce, " +
+            "vous parvenez à blesser gravement le sorcier.");
+        Choice choice91_1 = new Choice("Porter le coup final", 93);
+        Choice choice91_2 = new Choice("Proposer à Zahda de se rendre", 94);
+        section91.addChoice(choice91_1);
+        section91.addChoice(choice91_2);
+        sections.put(91, section91);
+        
+        // Section 92 - Utiliser la pierre de cristal
+        Section section92 = new Section(92,
+            "Vous brandissez la pierre de cristal bleue face à Zahda. Une lumière aveuglante jaillit, " +
+            "et les deux cristaux entrent en résonance. Le cristal de pouvoir du sorcier se fissure, libérant " +
+            "une onde d'énergie qui vous projette tous deux au sol. Lorsque vous reprenez conscience, " +
+            "Zahda gît inerte près de son artefact brisé.");
+        Choice choice92_1 = new Choice("Détruire définitivement le cristal de pouvoir", 95);
+        Choice choice92_2 = new Choice("Examiner le corps de Zahda", 96);
+        section92.addChoice(choice92_1);
+        section92.addChoice(choice92_2);
+        sections.put(92, section92);
+        
+        // Section 93 - Le coup final
+        Section section93 = new Section(93,
+            "Votre lame s'abat sur Zahda dans un arc parfait. Le sorcier s'effondre, vaincu, " +
+            "mais son cristal de pouvoir s'illumine soudain d'une lueur menaçante. Vous sentez " +
+            "qu'il va libérer toute son énergie destructrice!");
+        Choice choice93_1 = new Choice("Fuir la salle du trône", 97);
+        Choice choice93_2 = new Choice("Tenter de détruire le cristal", 95);
+        section93.addChoice(choice93_1);
+        section93.addChoice(choice93_2);
+        sections.put(93, section93);
+        
+        // Section 94 - Offrir la clémence
+        Section section94 = new Section(94,
+            "Vous proposez à Zahda de se rendre, lui offrant ainsi une chance de rédemption. " +
+            "Le sorcier semble hésiter un instant, puis un sourire cruel se dessine sur son visage. " +
+            "'Les faibles offrent la clémence, les forts la refusent!' crie-t-il en lançant un sort puissant dans votre direction.");
+        Choice choice94_1 = new Choice("Tenter d'esquiver le sort", 97);
+        Choice choice94_2 = new Choice("Utiliser votre bouclier Kai pour le contrer", 95);
+        section94.addChoice(choice94_1);
+        section94.addChoice(choice94_2);
+        sections.put(94, section94);
+        
+        // Section 95 - Victoire imminente
+        Section section95 = new Section(95,
+            "Dans un geste désespéré, vous frappez le cristal de pouvoir de toutes vos forces. " +
+            "Une explosion d'énergie magique envahit la salle, mais votre détermination de Seigneur Kai " +
+            "vous protège de ses effets les plus dévastateurs. Lorsque la lumière s'estompe, " +
+            "il ne reste plus que des fragments inertes du cristal. Le pouvoir de Zahda est brisé à jamais.");
+        Choice choice95_1 = new Choice("Quitter la Tour de Cristal en vainqueur", 99);
+        section95.addChoice(choice95_1);
+        sections.put(95, section95);
+        
+        // Section 96 - Examiner Zahda
+        Section section96 = new Section(96,
+            "Vous examinez prudemment le corps de Zahda. Le sorcier est inconscient mais toujours vivant. " +
+            "Son cristal de pouvoir, bien que fissuré, pulse encore faiblement. Vous savez qu'il représente " +
+            "toujours une menace tant qu'il n'est pas complètement détruit.");
+        Choice choice96_1 = new Choice("Détruire le cristal", 95);
+        Choice choice96_2 = new Choice("Emmener Zahda et le cristal comme prisonniers", 98);
+        section96.addChoice(choice96_1);
+        section96.addChoice(choice96_2);
+        sections.put(96, section96);
+        
+        // Section 97 - Fuite stratégique
+        Section section97 = new Section(97,
+            "Vous battez en retraite rapidement alors que l'énergie du cristal devient instable. " +
+            "Une explosion magique secoue toute la tour, faisant trembler les murs et le sol. " +
+            "Vous parvenez à vous mettre à l'abri juste à temps, mais vous savez que la menace " +
+            "n'est pas entièrement écartée tant que Zahda ou son cristal pourraient survivre.");
+        Choice choice97_1 = new Choice("Retourner vérifier après l'explosion", 96);
+        Choice choice97_2 = new Choice("Quitter la tour pendant que vous le pouvez", 98);
+        section97.addChoice(choice97_1);
+        section97.addChoice(choice97_2);
+        sections.put(97, section97);
+        
+        // Compléter les sections existantes pour éviter les impasses
+        // Ajouter des liens vers les nouvelles sections finales
+        
+        // Ajouter section 42 (trésor spécial)
+        Section section42 = new Section(42,
+            "Vous découvrez une salle secrète contenant un trésor ancien! Des pièces d'or brillent à la lueur des torches, " +
+            "et parmi elles se trouve un médaillon mystérieux. En l'examinant, vous sentez qu'il possède un pouvoir magique.");
+        player.addGold(20);
+        player.addSpecialItem();
+        Choice choice42_1 = new Choice("Porter le médaillon", 43);
+        Choice choice42_2 = new Choice("Laisser le médaillon et continuer", 44);
+        section42.addChoice(choice42_1);
+        section42.addChoice(choice42_2);
+        sections.put(42, section42);
+        
+        // Section 43 - Suite du trésor
+        Section section43 = new Section(43,
+            "En plaçant le médaillon autour de votre cou, vous sentez une vague d'énergie vous traverser. " +
+            "Votre endurance augmente et vos sens semblent plus aiguisés. C'est un artefact puissant qui " +
+            "vous sera certainement utile pour la suite de votre quête.");
+        player.addEndurance(5);
+        Choice choice43_1 = new Choice("Continuer votre exploration", 44);
+        section43.addChoice(choice43_1);
+        sections.put(43, section43);
+        
+        // Section 44 - Après le trésor
+        Section section44 = new Section(44,
+            "Vous quittez la salle du trésor, enrichi de votre découverte. Le couloir continue, " +
+            "s'enfonçant plus profondément dans la Tour de Cristal. Vous sentez que vous vous rapprochez " +
+            "du cœur de ce lieu mystérieux et des secrets qu'il recèle.");
+        Choice choice44_1 = new Choice("Monter les escaliers vers le niveau supérieur", 50);
+        Choice choice44_2 = new Choice("Suivre le couloir qui s'enfonce horizontalement", 51);
+        section44.addChoice(choice44_1);
+        section44.addChoice(choice44_2);
+        sections.put(44, section44);
+        
+        // Section 50 - Escaliers vers le haut
+        Section section50 = new Section(50,
+            "Les escaliers en colimaçon vous mènent à un niveau supérieur de la tour. L'air y est plus frais, " +
+            "et vous apercevez des fenêtres qui laissent entrevoir le paysage extérieur. Vous êtes désormais " +
+            "à une hauteur considérable, avec une vue impressionnante sur les terres environnantes.");
+        Choice choice50_1 = new Choice("Explorer ce niveau", 60);
+        Choice choice50_2 = new Choice("Continuer à monter", 61);
+        section50.addChoice(choice50_1);
+        section50.addChoice(choice50_2);
+        sections.put(50, section50);
+        
+        // Section 51 - Couloir horizontal
+        Section section51 = new Section(51,
+            "Le couloir s'étend devant vous, faiblement éclairé par des torches magiques qui ne semblent jamais " +
+            "se consumer. Vous entendez des bruits étranges provenant des profondeurs de la tour, " +
+            "peut-être des créatures au service de Zahda ou d'autres prisonniers.");
+        Choice choice51_1 = new Choice("Suivre les bruits", 62);
+        Choice choice51_2 = new Choice("Prendre un passage latéral plus discret", 63);
+        section51.addChoice(choice51_1);
+        section51.addChoice(choice51_2);
+        sections.put(51, section51);
+        
+        // Section 60-63 - Chemins intermédiaires
+        Section section60 = new Section(60,
+            "Ce niveau de la tour semble être une zone de vie. Vous trouvez des quartiers d'habitation, " +
+            "probablement utilisés par les serviteurs et les gardes de Zahda. Tout est désert pour l'instant, " +
+            "mais vous restez sur vos gardes.");
+        Choice choice60_1 = new Choice("Fouiller les quartiers", 70);
+        Choice choice60_2 = new Choice("Continuer vers la salle principale", 71);
+        section60.addChoice(choice60_1);
+        section60.addChoice(choice60_2);
+        sections.put(60, section60);
+        
+        Section section61 = new Section(61,
+            "Vous continuez à monter les escaliers en spirale. Ils semblent interminables, " +
+            "comme si la tour était plus haute vue de l'intérieur que de l'extérieur - peut-être " +
+            "un effet de la magie de Zahda. Finalement, vous atteignez une porte ornée de symboles arcanes.");
+        Choice choice61_1 = new Choice("Ouvrir la porte prudemment", 72);
+        Choice choice61_2 = new Choice("Examiner les symboles avant d'entrer", 73);
+        section61.addChoice(choice61_1);
+        section61.addChoice(choice61_2);
+        sections.put(61, section61);
+        
+        // Ajouter les autres sections intermédiaires ici...
+        Section section62 = new Section(62,
+            "En suivant les bruits, vous arrivez dans une salle où plusieurs créatures humanoïdes aux traits déformés " +
+            "sont enfermées dans des cages. Elles semblent être des sujets d'expérience de Zahda, transformés par sa magie noire.");
+        Choice choice62_1 = new Choice("Libérer les créatures", 74);
+        Choice choice62_2 = new Choice("Passer discrètement sans intervenir", 75);
+        section62.addChoice(choice62_1);
+        section62.addChoice(choice62_2);
+        sections.put(62, section62);
+        
+        Section section63 = new Section(63,
+            "Le passage latéral vous mène à une bibliothèque ancienne. Des étagères remplies de grimoires et de parchemins " +
+            "s'élèvent jusqu'au plafond. C'est probablement ici que Zahda étudie les arts mystiques et prépare ses sortilèges.");
+        Choice choice63_1 = new Choice("Consulter les livres", 76);
+        Choice choice63_2 = new Choice("Chercher un passage secret", 77);
+        section63.addChoice(choice63_1);
+        section63.addChoice(choice63_2);
+        sections.put(63, section63);
+        
+        // Continuer avec d'autres sections pour créer un chemin complet vers la fin
+        // Sections qui mènent à la victoire ou à la défaite
+        
+        // Section 80 - Approche de la fin
+        Section section80 = new Section(80,
+            "Vous sentez que vous approchez du sommet de la Tour de Cristal. L'air est chargé d'énergie magique, " +
+            "et les murs eux-mêmes semblent vibrer d'un pouvoir ancien. Devant vous se dresse une double porte " +
+            "monumentale, marquée du sceau personnel de Zahda.");
+        Choice choice80_1 = new Choice("Ouvrir les portes et affronter ce qui vous attend", 90);
+        Choice choice80_2 = new Choice("Chercher une autre entrée plus discrète", 81);
+        section80.addChoice(choice80_1);
+        section80.addChoice(choice80_2);
+        sections.put(80, section80);
+        
+        Section section81 = new Section(81,
+            "En cherchant une autre entrée, vous découvrez un petit passage dissimulé derrière une tapisserie. " +
+            "Il semble mener à la même salle, mais pourrait vous permettre d'entrer sans être immédiatement repéré.");
+        Choice choice81_1 = new Choice("Emprunter le passage secret", 90);
+        section81.addChoice(choice81_1);
+        sections.put(81, section81);
+        
+        // Section pour remplacer les fins manquantes en cas de besoin
+        Section sectionDefault = new Section(404,
+            "Le chemin devant vous s'obscurcit et devient incertain. Vous sentez que la tour elle-même tente de vous égarer, " +
+            "utilisant sa magie pour brouiller vos sens. Après un moment de désorientation, vous devez faire un choix crucial.");
+        Choice choiceDefault1 = new Choice("Faire appel à votre discipline Kai pour retrouver votre chemin", 80);
+        Choice choiceDefault2 = new Choice("Revenir sur vos pas et tenter une autre direction", 50);
+        sectionDefault.addChoice(choiceDefault1);
+        sectionDefault.addChoice(choiceDefault2);
+        sections.put(404, sectionDefault);
+        
+        // Sections spéciales
+        
+        // Section 66 - Piège
+        Section section66 = new Section(66,
+            "Un mécanisme se déclenche sous vos pieds! Le sol s'ouvre et des lames acérées jaillissent des murs. " +
+            "Vous tentez d'éviter le piège, mais vous subissez néanmoins quelques blessures.");
+        Choice choice66_1 = new Choice("Poursuivre avec prudence", 67);
+        Choice choice66_2 = new Choice("Chercher un chemin alternatif", 68);
+        section66.addChoice(choice66_1);
+        section66.addChoice(choice66_2);
+        sections.put(66, section66);
+        
+        // Section 88 - Rencontre mystérieuse
+        Section section88 = new Section(88,
+            "Dans un recoin sombre, vous rencontrez une silhouette encapuchonnée. Elle lève une main et murmure: " +
+            "'Je suis un ancien serviteur de Zahda, mais j'ai vu la noirceur de son âme. Je peux vous aider à l'arrêter.'");
+        Choice choice88_1 = new Choice("Faire confiance à l'inconnu", 89);
+        Choice choice88_2 = new Choice("Refuser son aide et continuer seul", 80);
+        section88.addChoice(choice88_1);
+        section88.addChoice(choice88_2);
+        sections.put(88, section88);
+        
+        Section section89 = new Section(89,
+            "L'inconnu vous révèle un passage secret et vous donne une potion de guérison. " +
+            "'Ceci vous mènera directement aux quartiers de Zahda. Soyez prudent, car ses pouvoirs sont grands.'");
+        player.addPotion();
+        Choice choice89_1 = new Choice("Emprunter le passage secret", 90);
+        section89.addChoice(choice89_1);
+        sections.put(89, section89);
+        
+        // Ajouter des liens vers les sections finales pour tous les chemins existants qui n'en ont pas
     }
 } 

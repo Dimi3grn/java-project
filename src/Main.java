@@ -2,11 +2,19 @@
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 package src;
 
-import src.controller.GameController;
+import javafx.application.Application;
+import javafx.stage.Stage;
+import src.view.JavaFXView;
 
-public class Main {
+public class Main extends Application {
+    
     public static void main(String[] args) {
-        GameController gameController = new GameController();
-        gameController.startGame();
+        launch(args);
+    }
+    
+    @Override
+    public void start(Stage primaryStage) {
+        JavaFXView view = new JavaFXView(primaryStage);
+        view.showMainMenu();
     }
 }
